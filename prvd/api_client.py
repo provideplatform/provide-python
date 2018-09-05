@@ -1,4 +1,4 @@
-"""API client base class."""
+'''API client base class.'''
 
 import json
 import os
@@ -47,6 +47,6 @@ class APIClient(object):
 
     def __headers__(self):
         return {
-            "user-agent": os.environ.get('API_USER_AGENT', 'provide-python client'),
-            "authorization": 'bearer {}'.format(self.token),
+            'user-agent': os.environ.get('API_USER_AGENT', 'provide-python client'),
+            'authorization': 'bearer {}'.format(self.token),
         }
