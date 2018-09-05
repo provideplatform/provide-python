@@ -25,7 +25,7 @@ class APIClient(object):
         headers['content-type'] = 'application/json'
         r = requests.post('{}/{}'.format(self.base_url, uri), headers=headers, data=json.dumps(params))
         response = r.text
-        if r.status_code > 300 and r.headers['content-type'].find('application/json') == 0:
+        if r.status_code < 300 and r.headers['content-type'].find('application/json') == 0:
             response = r.json()
         return r.status_code, r.headers, response
 
@@ -34,14 +34,14 @@ class APIClient(object):
         headers['content-type'] = 'application/json'
         r = requests.put('{}/{}'.format(self.base_url, uri), headers=headers, data=json.dumps(params))
         response = r.text
-        if r.status_code > 300 and r.headers['content-type'].find('application/json') == 0:
+        if r.status_code < 300 and r.headers['content-type'].find('application/json') == 0:
             response = r.json()
         return r.status_code, r.headers, response
 
     def delete(self, uri):
         r = requests.delete('{}/{}'.format(self.base_url, uri), headers=self.__headers__())
         response = r.text
-        if r.status_code > 300 and r.headers['content-type'].find('application/json') == 0:
+        if r.status_code < 300 and r.headers['content-type'].find('application/json') == 0:
             response = r.json()
         return r.status_code, r.headers, response
 
