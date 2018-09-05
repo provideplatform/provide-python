@@ -1,18 +1,20 @@
 """API client base class."""
 
+import json
 import os
 import requests
 
-class APIClient:
+class APIClient(object):
 
+    DEFAULT_SCHEME = 'https'
     DEFAULT_VERSION = 'v1'
 
     def __init__(self, scheme, host, token):
         self.base_url = '{}://{}/api/{}'.format(scheme, host, APIClient.DEFAULT_VERSION)
         self.token = token
 
-    def get(self, uri):
-        r = requests.get('{}/{}'.format(uri), headers=self.__headers__())
+    def get(self, uri, params):
+        r = requests.get('{}/{}'.format(self.base_url, uri), headers=self.__headers__(), params=params)
         response = r.text
         if r.status_code == 200 and r.headers['content-type'].find('application/json') == 0:
             response = r.json()
@@ -21,7 +23,7 @@ class APIClient:
     def post(self, uri, params):
         headers = self.__headers__()
         headers['content-type'] = 'application/json'
-        r = requests.post('{}/{}'.format(uri), headers=headers)
+        r = requests.post('{}/{}'.format(self.base_url, uri), headers=headers, data=json.dumps(params))
         response = r.text
         if r.status_code > 300 and r.headers['content-type'].find('application/json') == 0:
             response = r.json()
@@ -30,14 +32,14 @@ class APIClient:
     def put(self, uri, params):
         headers = self.__headers__()
         headers['content-type'] = 'application/json'
-        r = requests.put('{}/{}'.format(uri), headers=headers)
+        r = requests.put('{}/{}'.format(self.base_url, uri), headers=headers, data=json.dumps(params))
         response = r.text
         if r.status_code > 300 and r.headers['content-type'].find('application/json') == 0:
             response = r.json()
         return r.status_code, r.headers, response
 
     def delete(self, uri):
-        r = requests.delete('{}/{}'.format(uri), headers=self.__headers__())
+        r = requests.delete('{}/{}'.format(self.base_url, uri), headers=self.__headers__())
         response = r.text
         if r.status_code > 300 and r.headers['content-type'].find('application/json') == 0:
             response = r.json()
