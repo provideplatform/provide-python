@@ -40,7 +40,7 @@ class Goldmine(APIClient):
         return self.post('contracts', params)
 
     def execute_contract(self, contract_id, params):
-        return self.post('contracts/${contract_id}/execute', params)
+        return self.post('contracts/{}/execute'.format(contract_id), params)
 
     def fetch_networks(self, params):
         return self.get('networks', params)
@@ -55,43 +55,43 @@ class Goldmine(APIClient):
         return self.get('networks/{}'.format(network_id), {})
 
     def fetch_network_accounts(self, network_id, params):
-        return self.get('networks/${network_id}/accounts', params)
+        return self.get('networks/{}/accounts'.format(network_id), params)
 
     def fetch_network_blocks(self, network_id, params):
-        return self.get('networks/${network_id}/blocks', params)
+        return self.get('networks/{}/blocks'.format(network_id), params)
 
     def fetch_network_bridges(self, network_id, params):
-        return self.get('networks/${network_id}/bridges', params)
+        return self.get('networks/{}/bridges'.format(network_id), params)
 
     def fetch_network_connectors(self, network_id, params):
-        return self.get('networks/${network_id}/connectors', params)
+        return self.get('networks/{}/connectors'.format(network_id), params)
 
     def fetch_network_contracts(self, network_id, params):
-        return self.get('networks/${network_id}/contracts', params)
+        return self.get('networks/{}/contracts'.format(network_id), params)
 
     def fetch_network_contract_details(self, network_id, contract_id):
         return self.get('networks/{}/contracts/{}'.format(network_id, contract_id), {})
 
     def fetch_network_oracles(self, network_id, params):
-        return self.get('networks/${network_id}/oracles', params)
+        return self.get('networks/{}/oracles'.format(network_id), params)
 
     def fetch_network_tokens(self, network_id, params):
-        return self.get('networks/${network_id}/tokens', params)
+        return self.get('networks/{}/tokens'.format(network_id), params)
 
     def fetch_network_transactions(self, network_id, params):
-        return self.get('networks/${network_id}/transactions', params)
+        return self.get('networks/{}/transactions'.format(network_id), params)
 
     def fetch_network_transaction_details(self, network_id, transaction_id):
         return self.get('networks/{}/transactions/{}'.format(network_id, transaction_id), {})
 
     def fetch_network_status(self, network_id):
-        return self.get('networks/${network_id}/status', {})
+        return self.get('networks/{}/status'.format(network_id), {})
 
     def fetch_network_nodes(self, network_id, params):
-        return self.get('networks/${network_id}/nodes', params)
+        return self.get('networks/{}/nodes'.format(network_id), params)
 
     def create_network_node(self, network_id, params):
-        return self.post('networks/${network_id}/nodes', params)
+        return self.post('networks/{}/nodes'.format(network_id), params)
 
     def fetch_network_node_details(self, network_id, node_id):
         return self.get('networks/{}/nodes/{}'.format(network_id, node_id), {})
