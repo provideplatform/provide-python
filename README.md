@@ -8,13 +8,13 @@ Provide python client library.
 
 ## pipenv
 
-`pipenv install` uses the Pipefile to install package dependencies
+`pipenv install` uses the Pipefile to install package dependencies.
 
 ## Usage
 
 Basic transaction creation using a Provide API token:
 
-```
+```python
 from prvd.goldmine import Goldmine
 
 client = Goldmine('your-provide-application-api-token')
