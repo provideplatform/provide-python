@@ -47,3 +47,15 @@ class Ident(APIClient):
 
     def update_user(self, user_id, params):
         return self.put('users/{}'.format(user_id), params)
+
+    def create_kyc_application(self, params):
+        return self.post('kyc_applications', params)
+
+    def update_kyc_application(self, app_id, params):
+        return self.put('kyc_applications/{}'.format(app_id), params)
+
+    def fetch_kyc_applications(self, params):
+        return self.get('kyc_applications', params)
+
+    def fetch_kyc_application_details(self, kyc_app_id):
+        return self.get('kyc_applications/{}'.format(kyc_app_id), {})
