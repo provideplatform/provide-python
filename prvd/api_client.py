@@ -51,5 +51,5 @@ class APIClient(object):
             'user-agent': os.environ.get('API_USER_AGENT', 'provide-python client'),
         }
         if self.token != None:
-            headers['authorization'] = 'bearer {}'.format(self.token),
+            headers['authorization'] = 'bearer {}'.format(self.token)
         return headers

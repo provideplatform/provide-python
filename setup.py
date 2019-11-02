@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='prvd',
-    version='0.1.0',
+    version='0.1.1',
     author='Kyle Thomas',
     author_email='kyle@provide.services',
     description='Provide python client',
