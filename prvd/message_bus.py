@@ -9,6 +9,7 @@ from goldmine import Goldmine
 from ident import Ident
 from urlparse import urlparse
 
+
 class MessageBus(Goldmine):
 
     APPLICATION_TYPE_MESSAGE_BUS = 'message_bus'
