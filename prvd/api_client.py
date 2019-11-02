@@ -4,6 +4,7 @@ import json
 import os
 import requests
 
+
 class APIClient(object):
 
     DEFAULT_SCHEME = 'https'
@@ -46,7 +47,9 @@ class APIClient(object):
         return r.status_code, r.headers, response
 
     def __headers__(self):
-        return {
+        headers = {
             'user-agent': os.environ.get('API_USER_AGENT', 'provide-python client'),
-            'authorization': 'bearer {}'.format(self.token),
         }
+        if self.token != None:
+            headers['authorization'] = 'bearer {}'.format(self.token),
+        return headers

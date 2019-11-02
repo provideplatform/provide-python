@@ -1,13 +1,18 @@
 '''API client for the ident.provide.services microservice.'''
 
+import os
+
 from api_client import APIClient
+
 
 class Ident(APIClient):
 
     DEFAULT_HOST = 'ident.provide.services'
 
     def __init__(self, token):
-        super(Ident, self).__init__(APIClient.DEFAULT_SCHEME, Ident.DEFAULT_HOST, token) 
+        scheme = os.environ.get('IDENT_API_SCHEME', Ident.DEFAULT_SCHEME)
+        host = os.environ.get('IDENT_API_HOST', Ident.DEFAULT_HOST)
+        super(Ident, self).__init__(scheme, host, token) 
         
     def create_application(self, params):
         return self.post('applications', params)

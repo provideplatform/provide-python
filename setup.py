@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='prvd',
-    version='0.0.4',
+    version='0.1.0',
     author='Kyle Thomas',
     author_email='kyle@provide.services',
     description='Provide python client',
@@ -14,6 +14,8 @@ setuptools.setup(
     url='https://github.com/provideservices/provide-python',
     packages=setuptools.find_packages(),
     install_requires=[
+        'ipfshttpclient',
+        'pyjwt',
         'requests',
     ],
     classifiers=[

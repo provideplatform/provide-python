@@ -1,13 +1,18 @@
 '''API client for the goldmine.provide.services microservice.'''
 
+import os
+
 from api_client import APIClient
+
 
 class Goldmine(APIClient):
 
     DEFAULT_HOST = 'goldmine.provide.services'
 
     def __init__(self, token):
-        super(Goldmine, self).__init__(APIClient.DEFAULT_SCHEME, Goldmine.DEFAULT_HOST, token) 
+        scheme = os.environ.get('GOLDMINE_API_SCHEME', Goldmine.DEFAULT_SCHEME)
+        host = os.environ.get('GOLDMINE_API_HOST', Goldmine.DEFAULT_HOST)
+        super(Goldmine, self).__init__(scheme, host, token) 
 
     def fetch_bridges(self, params):
         return self.get('bridges', (self, params or {}))
