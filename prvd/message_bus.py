@@ -64,10 +64,13 @@ class MessageBus(Goldmine):
         if self.ipfsclient == None:
             raise Exception('unable to publish message without resolution of configured connector multiaddr')
 
-        kwargs.setdefault('opts', {}).update({
-            'stdin-name': kwargs.pop('stdin-name', '{}.json'.format(uuid.uuid4())),
-            'wrap-with-directory': kwargs.pop('wrap_with_directory', True),
-        }, **kwargs)
+        name = kwargs.pop('stdin-name', None)
+        opts = {
+            'wrap-with-directory': kwargs.pop('wrap_with_directory', False),
+        }
+        if name != None:
+            opts['stdin-name'] = name
+        kwargs.setdefault('opts', {}).update(opts, **kwargs)
 
         msghash = self.ipfsclient.add_bytes(msg, **kwargs)
         logging.info('published {}-byte raw message to IPFS; hash: {}'.format(len(msg), msghash))
