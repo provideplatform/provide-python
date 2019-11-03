@@ -4,6 +4,7 @@ import ipfshttpclient
 import jwt
 import logging
 import socket
+import uuid
 
 from goldmine import Goldmine
 from ident import Ident
@@ -55,7 +56,7 @@ class MessageBus(Goldmine):
         self.application_id = subparts[len(subparts) - 1]
         logging.info('resolved application id from JWT subject: {}'.format(self.application_id))
 
-    def publish_message(self, subject, msg):
+    def publish_message(self, subject, msg, **kwargs):
         '''Publish a message.'''
         if self.contract == None:
             raise Exception('unable to publish message without resolution of an on-chain registry contract')
@@ -63,7 +64,12 @@ class MessageBus(Goldmine):
         if self.ipfsclient == None:
             raise Exception('unable to publish message without resolution of configured connector multiaddr')
 
-        msghash = self.ipfsclient.add_bytes(msg)
+        kwargs.setdefault('opts', {}).update({
+            'stdin-name': kwargs.pop('stdin-name', '{}.json'.format(uuid.uuid4())),
+            'wrap-with-directory': kwargs.pop('wrap_with_directory', True),
+        }, **kwargs)
+
+        msghash = self.ipfsclient.add_bytes(msg, **kwargs)
         logging.info('published {}-byte raw message to IPFS; hash: {}'.format(len(msg), msghash))
 
         status, _, _ = self.execute_contract(self.contract.get('id'), {
