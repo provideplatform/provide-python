@@ -4,9 +4,11 @@ import ipfshttpclient
 import jwt
 import logging
 import socket
+import uuid
 
 from goldmine import Goldmine
 from ident import Ident
+from ipfshttpclient.multipart import BytesFileStream
 from urlparse import urlparse
 
 
@@ -55,23 +57,29 @@ class MessageBus(Goldmine):
         self.application_id = subparts[len(subparts) - 1]
         logging.info('resolved application id from JWT subject: {}'.format(self.application_id))
 
+    def ipfs_add(self, msg, **kwargs):
+        '''Add the given file to IPFS.'''
+        if self.ipfsclient == None:
+            raise Exception('unable to add file to IPFS without resolution of configured connector')
+
+        filename = kwargs.pop('filename', '{}.bytes'.format(uuid.uuid4()))
+        kwargs.setdefault('opts', {}).update({
+            'wrap-with-directory': kwargs.pop('wrap_with_directory', False),
+        }, **kwargs)
+
+        stream = BytesFileStream(msg, name=filename, chunk_size=self.multipart_chunk_size)
+        body, headers = stream.body(), stream.headers()
+        return self.ipfsclient._client.request('/add', decoder='json', data=body, headers=headers, **kwargs)
+
     def publish_message(self, subject, msg, **kwargs):
         '''Publish a message.'''
         if self.contract == None:
             raise Exception('unable to publish message without resolution of an on-chain registry contract')
 
         if self.ipfsclient == None:
-            raise Exception('unable to publish message without resolution of configured connector multiaddr')
+            raise Exception('unable to publish message without resolution of configured connector')
 
-        filename = kwargs.pop('filename', None)
-        opts = {
-            'wrap-with-directory': kwargs.pop('wrap_with_directory', False),
-        }
-        if filename != None:
-            opts['stdin-name'] = filename
-        kwargs.setdefault('opts', {}).update(opts, **kwargs)
-
-        msghash = self.ipfsclient.add_bytes(msg, **kwargs)
+        msghash = self.ipfs_add(msg, **kwargs)
         logging.info('published {}-byte raw message to IPFS; hash: {}'.format(len(msg), msghash))
 
         status, _, _ = self.execute_contract(self.contract.get('id'), {
