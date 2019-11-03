@@ -16,14 +16,37 @@ class MessageBus(Goldmine):
     CONNECTOR_TYPE_IPFS = 'ipfs'
     CONTRACT_METHOD_PUBLISH = 'publish'
     CONTRACT_TYPE_REGISTRY = 'registry'
+    DEFAULT_MULTIPART_CHUNK_SIZE = 4096
 
-    def __init__(self, token, wallet_address):
+    def __init__(self, token, wallet_address, multipart_chunk_size=DEFAULT_MULTIPART_CHUNK_SIZE):
         '''Initialize a message bus instance.'''
         super(MessageBus, self).__init__(token)
         self.ident = Ident(token)
         self.decode_jwt(token)
         self.wallet_address = wallet_address
+        self.multipart_chunk_size = multipart_chunk_size
         self.resolve()
+        self.init_ipfs()
+
+    def init_ipfs(self):
+        '''Initialize an IPFS client session.'''
+        self.ipfsclient = None
+
+        if self.connector == None:
+            raise Exception('unable to establish IPFS client connection without resolution of a distributed filesystem connector')
+
+        connector_addr = self.resolve_connector_multiaddr()
+        if connector_addr == None:
+            raise Exception('unable to establish IPFS client connection without resolution of configured distributed filesystem connector')
+
+        self.ipfsclient = ipfshttpclient.connect(addr=connector_addr,
+                                                 chunk_size=self.multipart_chunk_size,
+                                                 session=True)
+
+    def close(self):
+        '''Free resources and exit.'''
+        if self.ipfsclient != None:
+            self.ipfsclient.close()
 
     def decode_jwt(self, token):
         '''Decode the given JWT.'''
@@ -37,17 +60,11 @@ class MessageBus(Goldmine):
         if self.contract == None:
             raise Exception('unable to publish message without resolution of an on-chain registry contract')
 
-        if self.connector == None:
-            raise Exception('unable to publish message without resolution of a distributed filesystem connector')
-
-        connector_addr = self.resolve_connector_multiaddr()
-        if connector_addr == None:
+        if self.ipfsclient == None:
             raise Exception('unable to publish message without resolution of configured connector multiaddr')
 
-        msghash = None
-        with ipfshttpclient.connect(addr=connector_addr) as ipfsclient:
-            msghash = ipfsclient.add_bytes(msg)
-            logging.info('published raw message to IPFS; hash: {}'.format(msghash))
+        msghash = self.ipfsclient.add_bytes(msg)
+        logging.info('published {}-byte raw message to IPFS; hash: {}'.format(len(msg), msghash))
 
         status, _, _ = self.execute_contract(self.contract.get('id'), {
             'method': MessageBus.CONTRACT_METHOD_PUBLISH,
