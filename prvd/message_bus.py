@@ -4,7 +4,6 @@ import ipfshttpclient
 import jwt
 import logging
 import socket
-import uuid
 
 from goldmine import Goldmine
 from ident import Ident
