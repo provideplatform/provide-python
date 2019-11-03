@@ -79,7 +79,7 @@ class MessageBus(Goldmine):
         if self.ipfsclient == None:
             raise Exception('unable to publish message without resolution of configured connector')
 
-        msghash = self.ipfs_add(msg, **kwargs)
+        msghash = self.ipfs_add(msg, **kwargs)[0]['Hash']
         logging.info('published {}-byte raw message to IPFS; hash: {}'.format(len(msg), msghash))
 
         status, _, _ = self.execute_contract(self.contract.get('id'), {
