@@ -14,6 +14,18 @@ class Goldmine(APIClient):
         host = os.environ.get('GOLDMINE_API_HOST', Goldmine.DEFAULT_HOST)
         super(Goldmine, self).__init__(scheme, host, token) 
 
+    def fetch_accounts(self, params):
+        return self.get('accounts', params)
+
+    def fetch_account_details(self, account_id):
+        return self.get('accounts/{}'.format(account_id), {})
+
+    def fetch_account_balance(self, account_id, token_id):
+        return self.get('accounts/{}/balances/{}'.format(account_id, token_id), {})
+
+    def create_account(self, params):
+        return self.post('accounts', params)
+
     def fetch_bridges(self, params):
         return self.get('bridges', (self, params or {}))
 
@@ -133,9 +145,6 @@ class Goldmine(APIClient):
 
     def fetch_transaction_details(self, tx_id):
         return self.get('transactions/{}'.format(tx_id), {})
-
-    def fetch_wallet_balance(self, wallet_id, token_id):
-        return self.get('wallets/{}/balances/{}'.format(wallet_id, token_id), {})
 
     def fetch_wallets(self, params):
         return self.get('wallets', params)
