@@ -20,12 +20,12 @@ class MessageBus(Goldmine):
     CONTRACT_TYPE_REGISTRY = 'registry'
     DEFAULT_MULTIPART_CHUNK_SIZE = 4096
 
-    def __init__(self, token, wallet_address, multipart_chunk_size=DEFAULT_MULTIPART_CHUNK_SIZE):
+    def __init__(self, token, account_address, multipart_chunk_size=DEFAULT_MULTIPART_CHUNK_SIZE):
         '''Initialize a message bus instance.'''
         super(MessageBus, self).__init__(token)
         self.ident = Ident(token)
         self.decode_jwt(token)
-        self.wallet_address = wallet_address
+        self.account_address = account_address
         self.multipart_chunk_size = multipart_chunk_size
         self.resolve()
         self.init_ipfs()
@@ -87,7 +87,7 @@ class MessageBus(Goldmine):
             'method': MessageBus.CONTRACT_METHOD_PUBLISH,
             'params': [subject, msghash],
             'value': 0,
-            'wallet_address': self.wallet_address,
+            'account_address': self.account_address,
         })
         if status == 202:
             logging.info('published message on subject: {}'.format(subject))
